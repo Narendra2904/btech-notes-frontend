@@ -1,8 +1,7 @@
 /* =====================================================
    CONFIG
 ===================================================== */
-const API_BASE = "https://jtuh-backend-7rad.onrender.com"; 
-// 🔁 change only if backend URL changes
+const API_BASE = "https://jtuh-backend-7rad.onrender.com";
 
 /* =====================================================
    STATE
@@ -13,9 +12,6 @@ const state = {
   semester: null
 };
 
-/* =====================================================
-   CONSTANTS
-===================================================== */
 const YEARS = [1, 2, 3, 4];
 
 /* =====================================================
@@ -32,7 +28,7 @@ function esc(str) {
 }
 
 /* =====================================================
-   API URL BUILDERS
+   URL BUILDERS
 ===================================================== */
 function viewUrl(branch, year, sem, file) {
   return `${API_BASE}/api/pdf?branch=${encodeURIComponent(branch)}&file=${encodeURIComponent(
@@ -47,7 +43,7 @@ function downloadUrl(branch, year, sem, file) {
 }
 
 /* =====================================================
-   FETCH SUBJECTS
+   FETCH
 ===================================================== */
 async function fetchSubjects() {
   const res = await fetch(
@@ -57,10 +53,10 @@ async function fetchSubjects() {
 }
 
 /* =====================================================
-   UNIT GENERATOR
+   UNITS
 ===================================================== */
-function getUnitsForSubject(subjectFile) {
-  const base = subjectFile.replace(/\.pdf$/i, "");
+function getUnitsForSubject(file) {
+  const base = file.replace(/\.pdf$/i, "");
   return Array.from({ length: 5 }, (_, i) => ({
     title: `Unit ${i + 1}`,
     filename: `${base} - Unit ${i + 1}.pdf`
@@ -68,71 +64,45 @@ function getUnitsForSubject(subjectFile) {
 }
 
 /* =====================================================
-   SUBJECT FOLDER UI
+   SUBJECT UI
 ===================================================== */
 function createSubjectFolderDOM(subject) {
-  const wrapper = document.createElement("div");
-  wrapper.className =
-    "bg-white border-2 border-black p-4 shadow-[4px_4px_0] mb-4";
+  const div = document.createElement("div");
+  div.className = "bg-white border-2 border-black p-4 mb-4";
 
-  wrapper.innerHTML = `
-    <div class="flex justify-between items-center gap-4">
-      <div class="flex items-center gap-3">
-        <div class="p-2 bg-blue-200 border-2 border-black">
-          <i data-lucide="folder"></i>
-        </div>
-        <div>
-          <div class="font-bold">${esc(subject.title)}</div>
-          <div class="text-xs text-gray-500">${esc(subject.filename)}</div>
-        </div>
+  div.innerHTML = `
+    <div class="flex justify-between items-center">
+      <div>
+        <div class="font-bold">${esc(subject.title)}</div>
+        <div class="text-xs">${esc(subject.filename)}</div>
       </div>
-
-      <div class="flex items-center gap-2">
-        <a href="${viewUrl(state.branch, state.year, state.semester, subject.filename)}"
-           target="_blank"
-           class="text-xs underline font-bold">
-           OPEN PDF
-        </a>
-        <button class="toggle px-4 py-2 border-2 border-black bg-yellow-300 font-bold text-xs">
-          Open Folder
-        </button>
-      </div>
+      <button class="toggle bg-yellow-300 border-2 border-black px-3 py-1 font-bold">
+        Open
+      </button>
     </div>
-
-    <div class="units hidden mt-4 border-t-2 border-dashed pt-4"></div>
+    <div class="units hidden mt-3"></div>
   `;
 
-  const toggleBtn = wrapper.querySelector(".toggle");
-  const unitsBox = wrapper.querySelector(".units");
+  const btn = div.querySelector(".toggle");
+  const box = div.querySelector(".units");
 
-  toggleBtn.onclick = () => {
-    if (unitsBox.classList.contains("hidden")) {
-      const units = getUnitsForSubject(subject.filename);
-      unitsBox.innerHTML = units.map(u => `
-        <div class="flex justify-between items-center border-2 border-black p-2 mb-2 bg-zinc-50">
-          <a target="_blank"
-             href="${viewUrl(state.branch, state.year, state.semester, u.filename)}"
-             class="font-bold text-sm">
-             ${u.title}
-          </a>
-          <a href="${downloadUrl(state.branch, state.year, state.semester, u.filename)}"
-             class="text-xs font-bold">
-             DOWNLOAD
-          </a>
+  btn.onclick = () => {
+    if (box.classList.contains("hidden")) {
+      box.innerHTML = getUnitsForSubject(subject.filename).map(u => `
+        <div class="flex justify-between border-2 border-black p-2 mb-2">
+          <a target="_blank" href="${viewUrl(state.branch, state.year, state.semester, u.filename)}">${u.title}</a>
+          <a href="${downloadUrl(state.branch, state.year, state.semester, u.filename)}">Download</a>
         </div>
       `).join("");
-
-      unitsBox.classList.remove("hidden");
-      toggleBtn.textContent = "Close Folder";
-      toggleBtn.classList.replace("bg-yellow-300", "bg-white");
+      box.classList.remove("hidden");
+      btn.textContent = "Close";
     } else {
-      unitsBox.classList.add("hidden");
-      toggleBtn.textContent = "Open Folder";
-      toggleBtn.classList.replace("bg-white", "bg-yellow-300");
+      box.classList.add("hidden");
+      btn.textContent = "Open";
     }
   };
 
-  return wrapper;
+  return div;
 }
 
 /* =====================================================
@@ -142,63 +112,55 @@ async function renderUnits() {
   const box = document.getElementById("units");
   if (!box) return;
 
-  box.innerHTML = "Loading subjects...";
-
+  box.innerHTML = "Loading...";
   const subjects = await fetchSubjects();
 
-  if (!subjects || !subjects.length) {
-    box.innerHTML = "<div>No PDFs available</div>";
+  if (!subjects.length) {
+    box.innerHTML = "No PDFs found";
     return;
   }
 
   box.innerHTML = "";
-  subjects.forEach(sub => {
-    box.appendChild(createSubjectFolderDOM(sub));
-  });
-
-  if (window.lucide) lucide.createIcons();
+  subjects.forEach(s => box.appendChild(createSubjectFolderDOM(s)));
 }
 
 /* =====================================================
-   RENDER YEARS (FIXED)
+   RENDER YEARS
 ===================================================== */
 function renderYears() {
   const box = document.getElementById("year-container");
   if (!box) return;
 
   box.innerHTML = YEARS.map(y => `
-    <button
-      onclick="selectYear(${y})"
-      class="h-32 border-2 border-black bg-zinc-900 text-white hover:bg-yellow-400 hover:text-black transition-all flex flex-col items-center justify-center gap-1"
-    >
-      <span class="text-5xl font-black">${y}</span>
-      <span class="uppercase tracking-widest text-xs font-bold">Year</span>
+    <button onclick="selectYear(${y})"
+      class="year-btn border-2 border-black p-6 text-white bg-black">
+      ${y} YEAR
     </button>
   `).join("");
 }
 
 /* =====================================================
-   UI ACTIONS (SAFE)
+   FLOW CONTROLLERS (🔥 KEY FIX 🔥)
 ===================================================== */
 window.selectYear = y => {
   state.year = y;
-  state.branch = null;
-  state.semester = null;
 
-  const unitsBox = document.getElementById("units");
-  if (unitsBox) unitsBox.innerHTML = "";
+  document.getElementById("branch-section")?.classList.remove("hidden");
+  document.getElementById("semester-section")?.classList.add("hidden");
+  document.getElementById("units-section")?.classList.add("hidden");
 };
 
 window.selectBranch = b => {
   state.branch = b;
-  state.semester = null;
 
-  const unitsBox = document.getElementById("units");
-  if (unitsBox) unitsBox.innerHTML = "";
+  document.getElementById("semester-section")?.classList.remove("hidden");
+  document.getElementById("units-section")?.classList.add("hidden");
 };
 
 window.selectSemester = s => {
   state.semester = s;
+
+  document.getElementById("units-section")?.classList.remove("hidden");
   renderUnits();
 };
 
@@ -207,5 +169,4 @@ window.selectSemester = s => {
 ===================================================== */
 document.addEventListener("DOMContentLoaded", () => {
   renderYears();
-  if (window.lucide) lucide.createIcons();
 });
