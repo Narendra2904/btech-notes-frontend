@@ -1,17 +1,26 @@
-/* =========================================
+/* =====================================================
    CONFIG
-========================================= */
-const API_BASE = "http://localhost:5000";
+===================================================== */
+const API_BASE = "https://jtuh-backend-7rad.onrender.com"; 
+// ⬆️ replace with your backend URL (NOT localhost)
 
+/* =====================================================
+   STATE
+===================================================== */
 const state = {
-  branch: null,
   year: null,
+  branch: null,
   semester: null
 };
 
-/* =========================================
+/* =====================================================
+   CONSTANTS
+===================================================== */
+const YEARS = [1, 2, 3, 4];
+
+/* =====================================================
    HELPERS
-========================================= */
+===================================================== */
 function esc(str) {
   return String(str || "").replace(/[&<>"']/g, m => ({
     "&": "&amp;",
@@ -22,9 +31,9 @@ function esc(str) {
   }[m]));
 }
 
-/* =========================================
-   API URL BUILDERS (OLD LOGIC KEPT)
-========================================= */
+/* =====================================================
+   API URL BUILDERS (OLD LOGIC PRESERVED)
+===================================================== */
 function viewUrl(branch, year, sem, file) {
   return `${API_BASE}/api/pdf?branch=${encodeURIComponent(branch)}&file=${encodeURIComponent(
     `year${year}/sem${sem}/${file}`
@@ -37,9 +46,9 @@ function downloadUrl(branch, year, sem, file) {
   )}`;
 }
 
-/* =========================================
-   API FETCH
-========================================= */
+/* =====================================================
+   FETCH SUBJECTS FROM BACKEND
+===================================================== */
 async function fetchSubjects() {
   const res = await fetch(
     `${API_BASE}/api/list?branch=${state.branch}&year=${state.year}&sem=${state.semester}`
@@ -47,9 +56,9 @@ async function fetchSubjects() {
   return res.json();
 }
 
-/* =========================================
-   UNITS GENERATOR
-========================================= */
+/* =====================================================
+   UNITS GENERATOR (5 UNITS LOGIC)
+===================================================== */
 function getUnitsForSubject(subjectFile) {
   const base = subjectFile.replace(/\.pdf$/i, "");
   return Array.from({ length: 5 }, (_, i) => ({
@@ -58,9 +67,9 @@ function getUnitsForSubject(subjectFile) {
   }));
 }
 
-/* =========================================
+/* =====================================================
    SUBJECT FOLDER UI
-========================================= */
+===================================================== */
 function createSubjectFolderDOM(subject) {
   const wrapper = document.createElement("div");
   wrapper.className =
@@ -126,12 +135,14 @@ function createSubjectFolderDOM(subject) {
   return wrapper;
 }
 
-/* =========================================
-   CORE RENDER
-========================================= */
+/* =====================================================
+   RENDER SUBJECTS
+===================================================== */
 async function renderUnits() {
   const box = document.getElementById("units");
-  box.innerHTML = "Loading...";
+  if (!box) return;
+
+  box.innerHTML = "Loading subjects...";
 
   const subjects = await fetchSubjects();
 
@@ -145,21 +156,39 @@ async function renderUnits() {
     box.appendChild(createSubjectFolderDOM(sub));
   });
 
-  lucide.createIcons();
+  if (window.lucide) lucide.createIcons();
 }
 
-/* =========================================
-   UI CONTROLS (OLD FLOW KEPT)
-========================================= */
-window.selectBranch = b => {
-  state.branch = b;
-  state.year = null;
+/* =====================================================
+   YEAR RENDER (FIXES YOUR ISSUE)
+===================================================== */
+function renderYears() {
+  const box = document.getElementById("year-container");
+  if (!box) return;
+
+  box.innerHTML = YEARS.map(y => `
+    <button
+      onclick="selectYear(${y})"
+      class="h-32 border-2 border-black bg-zinc-900 text-white hover:bg-yellow-400 hover:text-black transition-all flex flex-col items-center justify-center gap-1"
+    >
+      <span class="text-5xl font-black">${y}</span>
+      <span class="uppercase tracking-widest text-xs font-bold">Year</span>
+    </button>
+  `).join("");
+}
+
+/* =====================================================
+   UI ACTIONS (HTML EXPECTS THESE)
+===================================================== */
+window.selectYear = y => {
+  state.year = y;
+  state.branch = null;
   state.semester = null;
   document.getElementById("units").innerHTML = "";
 };
 
-window.selectYear = y => {
-  state.year = y;
+window.selectBranch = b => {
+  state.branch = b;
   state.semester = null;
   document.getElementById("units").innerHTML = "";
 };
@@ -169,9 +198,10 @@ window.selectSemester = s => {
   renderUnits();
 };
 
-/* =========================================
+/* =====================================================
    INIT
-========================================= */
+===================================================== */
 document.addEventListener("DOMContentLoaded", () => {
-  lucide.createIcons();
+  renderYears();
+  if (window.lucide) lucide.createIcons();
 });
