@@ -1,0 +1,71 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=JetBrains+Mono:wght@700&family=Press+Start+2P&display=swap');
+
+body { font-family: 'Inter', sans-serif; }
+.font-mono { font-family: 'JetBrains Mono', monospace; }
+.font-retro { font-family: 'Press Start 2P', cursive; }
+
+.neo-shadow { box-shadow: 4px 4px 0px 0px rgba(0,0,0,1); }
+.neo-shadow-hover:hover { box-shadow: 8px 8px 0px 0px rgba(0,0,0,1); }
+.neo-shadow-active { box-shadow: 0px 0px 20px rgba(250,204,21,0.5); }
+
+.fade-in { animation: fadeIn 0.45s ease-in forwards; opacity: 0; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+.marquee-wrapper { overflow: hidden; white-space: nowrap; }
+.marquee-content { display: inline-block; animation: marquee 20s linear infinite; }
+@keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+.blink { animation: blinker 1.5s linear infinite; }
+@keyframes blinker { 50% { opacity: 0; } }
+
+.glitch-hover:hover { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; transform: translate3d(0, 0, 0); backface-visibility: hidden; perspective: 1000px; }
+@keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); } }
+
+.modal-enter { animation: popIn 0.28s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+@keyframes popIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+
+@media (max-width: 640px) {
+  .marquee-content { animation-duration: 30s; }
+}
+/* Assuming your container class is .navbar or .header */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background-color: white; /* or your background color */
+    flex-wrap: wrap; /* This allows items to drop to next line */
+}
+
+/* Mobile specific adjustments */
+@media screen and (max-width: 768px) {
+    .navbar {
+        flex-direction: column; /* Stacks items vertically on phone */
+        gap: 10px;
+    }
+    
+    /* Make the button full width on mobile for easier tapping */
+    .system-btn {
+        width: 100%; 
+        text-align: center;
+    }
+}
+/* 1. Define the animation */
+@keyframes marquee {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
+/* 2. Make sure the text doesn't wrap */
+.marquee-content {
+  white-space: nowrap; /* Forces text into one long line */
+  display: inline-block;
+}
+
+/* 3. CRITICAL: Hide the overflow on the parent */
+.marquee-wrapper {
+  overflow-x: hidden; /* Prevents the moving text from creating a horizontal scrollbar */
+  width: 100%;
+  position: relative;
+  background-color: #FACC15; /* Your yellow color */
+}

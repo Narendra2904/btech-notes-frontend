@@ -1,0 +1,650 @@
+<!-- index.html (cleaned, full) -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#0d6efd" />
+  <link rel="icon" href="/fav.png" sizes="192x192" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <link rel="apple-touch-icon" href="fav.png">
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>JNTUH Notes- B.Tech Resources</title>
+  <link rel="icon" href="cropped.jpg"  />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://btech-notes.vercel.app/_vercel/insights/script.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+      /* 1. GLOBAL SCROLL FIXES */
+      html, body {
+          height: auto !important;
+          min-height: 100vh;
+          overflow-x: hidden; /* Prevent side scrolling */
+          overflow-y: auto;   /* Force vertical scroll */
+          scroll-behavior: smooth;
+      }
+
+      /* 2. MARQUEE ANIMATION */
+      @keyframes marquee {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
+      }
+      .animate-marquee {
+        display: inline-block;
+        white-space: nowrap;
+        animation: marquee 20s linear infinite;
+      }
+
+      /* 3. UTILITIES */
+      .neo-shadow { box-shadow: 4px 4px 0px 0px rgba(0,0,0,1); }
+      .font-retro { font-family: 'Courier New', Courier, monospace; }
+      
+      @keyframes blink { 50% { opacity: 0; } }
+      .blink { animation: blink 1s infinite; }
+
+      /* 4. MOBILE MENU ANIMATION */
+      #mobile-menu {
+          transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+          transform-origin: top;
+      }
+      .menu-hidden {
+          transform: scaleY(0);
+          opacity: 0;
+          pointer-events: none; /* Critical for clicking content behind menu */
+      }
+      .menu-visible {
+          transform: scaleY(1);
+          opacity: 1;
+          pointer-events: auto;
+      }
+  </style>
+  <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "BTech Notes",
+    "alternateName": ["BTECHNotes", "BTech Jntuh Notes"],
+    "url": "https://btech-notes.vercel.app/"
+}
+</script>
+</head>
+
+<body class="min-h-screen bg-neutral-50 text-black selection:bg-pink-400 selection:text-white flex flex-col pt-[80px]">
+
+  <nav class="fixed top-0 left-0 right-0 z-50 bg-white border-b-4 border-black px-6 py-4 flex items-center justify-between h-[80px]">
+      
+      <div class="flex items-center gap-2 cursor-pointer" onclick="window.location.href='https://btech-notes.vercel.app'">
+          <div class="bg-yellow-400 p-2 border-2 border-black neo-shadow hover:rotate-12 transition-transform">
+              <i data-lucide="graduation-cap" class="text-black w-6 h-6"></i>
+          </div>
+          <span class="text-2xl font-black tracking-tighter uppercase italic">Back<span class="text-yellow-500">.Benchers</span></span>
+      </div>
+
+      <div class="hidden md:flex items-center gap-8 font-bold">
+    <a href="#" class="hover:bg-black hover:text-white px-2 py-1 transition-all">Home</a>
+
+    <!-- NEW: View Results link -->
+    <a href="https://btech-jntuh-results.vercel.app/" class="hover:bg-black hover:text-white px-2 py-1 transition-all text-sm">
+        View Results
+    </a>
+    <!-- Change href to your real results URL if you have one -->
+    <!-- Example: href="https://results.jntuh.ac.in/" -->
+
+    <a href="#selection-zone" class="hover:bg-black hover:text-white px-2 py-1 transition-all">Resources</a>
+        <a href="movie.html" class="hover:bg-black hover:text-white px-2 py-1 transition-all">Movie Suggestions</a>
+
+    <div class="flex items-center gap-2 border-2 border-black px-4 py-1 bg-zinc-100 font-mono text-xs shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+        <div class="w-3 h-3 bg-green-500 rounded-full border border-black blink"></div>
+        <span>SYSTEM: ONLINE</span>
+    </div>
+</div>
+
+
+      <button id="mobile-menu-btn" onclick="toggleMobileMenu()" class="md:hidden border-2 border-black p-2 hover:bg-yellow-400 transition-colors neo-shadow bg-white">
+          <i data-lucide="menu" class="w-6 h-6"></i>
+      </button>
+  </nav>
+  <!-- Download tip bar (large text, clean on mobile + desktop) -->
+<div class="bg-blue-50 border-b-2 border-dashed border-blue-400 px-3 py-3">
+  <div class="max-w-4xl mx-auto flex items-center justify-center gap-2 text-gray-800 flex-wrap text-sm md:text-base font-medium leading-tight">
+
+    <i data-lucide="info" class="w-5 h-5 md:w-6 md:h-6"></i>
+
+    <span>If the file doesn’t download automatically, tap</span>
+
+    <span class="inline-flex items-center gap-1 font-semibold">
+      three dots <i data-lucide="more-vertical" class="w-5 h-5 md:w-6 md:h-6"></i>
+    </span>
+
+    <span>and then</span>
+
+    <span class="inline-flex items-center gap-1 font-semibold">
+      download <i data-lucide="download" class="w-5 h-5 md:w-6 md:h-6"></i>
+    </span>
+
+  </div>
+</div>
+
+
+
+
+  <div id="mobile-menu" class="fixed top-[80px] left-0 right-0 bg-white border-b-4 border-black z-40 p-6 flex flex-col gap-4 menu-hidden shadow-[0px_10px_20px_rgba(0,0,0,0.2)]">
+    <a href="#" onclick="toggleMobileMenu()" class="text-xl font-bold border-2 border-black p-3 hover:bg-yellow-400 text-center transition-all">Home</a>
+
+    <!-- NEW: View Results link -->
+    <a href="https://btech-jntuh-results.vercel.app/" onclick="toggleMobileMenu()" class="text-lg font-bold border-2 border-black p-3 hover:bg-yellow-400 text-center transition-all">
+        View Results
+    </a>
+    <!-- Again, change href to your final results URL -->
+
+    <a href="#selection-zone" onclick="toggleMobileMenu()" class="text-xl font-bold border-2 border-black p-3 hover:bg-yellow-400 text-center transition-all">Resources</a>
+        <a href="movie.html" onclick="toggleMobileMenu()" class="text-xl font-bold border-2 border-black p-3 hover:bg-yellow-400 text-center transition-all">Movie Suggestions</a>
+
+    <div class="flex items-center justify-center gap-2 border-2 border-black p-3 bg-zinc-100 font-mono text-sm mt-2">
+        <div class="w-3 h-3 bg-green-500 rounded-full border border-black blink"></div>
+        <span>SYSTEM: ONLINE</span>
+    </div>
+</div>
+
+
+  <header class="pt-12 pb-12 px-6 bg-white flex flex-col items-center text-center relative overflow-hidden border-b-4 border-black">
+    <div class="max-w-4xl z-10 relative">
+      <div class="inline-block bg-zinc-900 text-white px-3 py-1 font-mono text-sm mb-4 border-2 border-black -rotate-2">STUDENT_EDITION</div>
+      <h1 class="text-5xl md:text-7xl font-black mb-6 leading-tight tracking-tight cursor-default">
+        SELECT. CLICK. <span class="bg-yellow-400 px-2 border-2 border-black inline-block transform hover:scale-110 transition-transform">STUDY.</span>
+      </h1>
+      <p class="text-xl text-gray-700 font-medium max-w-2xl mx-auto">No login required. No hidden fees. Just the raw materials you need to pass.</p>
+    </div>
+  </header>
+
+  <div class="bg-yellow-400 border-b-4 border-black py-3 overflow-hidden font-black italic text-lg tracking-widest uppercase relative whitespace-nowrap">
+      <div class="animate-marquee">
+          // CURRENTLY UPDATED 3-1, 3-2, 4-1 ALL SUBJECTS. MORE SUBJECTS WILL UPDATE SOON. //CURRENTLY UPDATED 3-1, 3-2, 4-1 ALL SUBJECTS. MORE SUBJECTS WILL UPDATE SOON. //CURRENTLY UPDATED 3-1, 3-2, 4-1 ALL SUBJECTS. MORE SUBJECTS WILL UPDATE SOON. //CURRENTLY UPDATED 3-1, 3-2, 4-1 ALL SUBJECTS. MORE SUBJECTS WILL UPDATE SOON.  //
+      </div>
+  </div>
+
+  <div id="selection-zone" class="bg-zinc-50 flex-grow pb-20">
+    
+    <section id="year-section" class="bg-black text-white py-12 px-6 border-b-4 border-black relative overflow-hidden scroll-mt-24">
+      <div class="max-w-7xl mx-auto relative z-10">
+        <h2 class="text-2xl font-black mb-6 uppercase tracking-widest text-yellow-400 flex items-center gap-2">
+          <span class="bg-yellow-400 text-black w-8 h-8 flex items-center justify-center border-2 border-white">1</span>
+          Select Year
+        </h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="year-container">
+            <div class="col-span-2 md:col-span-4 text-center text-gray-500 font-mono text-sm">[Loading Years from Script...]</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="branch-section" class="py-12 px-6 max-w-7xl mx-auto hidden scroll-mt-24">
+      <h2 class="text-2xl font-black mb-6 uppercase tracking-widest text-black flex items-center gap-2">
+        <span class="bg-black text-white w-8 h-8 flex items-center justify-center border-2 border-black">2</span>
+        Select Branch
+      </h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3" id="branch-container"></div>
+    </section>
+
+    <section id="semester-section" class="py-8 px-6 max-w-7xl mx-auto hidden border-t-2 border-dashed border-gray-400 mt-8 scroll-mt-24">
+      <h2 class="text-2xl font-black mb-6 uppercase tracking-widest text-black flex items-center gap-2">
+        <span class="bg-black text-white w-8 h-8 flex items-center justify-center border-2 border-black">3</span>
+        Select Semester
+      </h2>
+      <div class="flex gap-4" id="semester-container">
+        <button data-sem="1" id="sem-btn-1" class="flex-1 py-6 border-2 border-black font-black text-xl hover:bg-yellow-400 transition-all">SEMESTER 1</button>
+        <button data-sem="2" id="sem-btn-2" class="flex-1 py-6 border-2 border-black font-black text-xl hover:bg-yellow-400 transition-all">SEMESTER 2</button>
+      </div>
+    </section>
+
+    <section id="resources-section" class="py-12 px-6 max-w-7xl mx-auto hidden border-t-4 border-black mt-8 bg-white relative scroll-mt-24">
+      <div class="mb-8 p-4 bg-yellow-100 border-2 border-black font-bold flex flex-wrap gap-2 items-center shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)]">
+        <i data-lucide="folder-open" class="w-5 h-5"></i>
+        <span class="font-mono text-sm text-gray-600">PATH://</span>
+        <div id="breadcrumb-text" class="flex items-center gap-2 uppercase text-blue-800 font-black"></div>
+      </div>
+
+      <div class="flex flex-col lg:flex-row gap-12">
+        <div class="flex-1">
+          <div class="flex items-center gap-3 mb-8">
+            <div class="bg-blue-300 p-2 border-2 border-black neo-shadow rotate-3">
+              <i data-lucide="book-open" class="w-7 h-7 text-black"></i>
+            </div>
+            <h2 id="left-title" class="text-4xl font-black italic">SUBJECTS</h2>
+          </div>
+          <div id="notes-container" class="space-y-6"></div>
+        </div>
+
+        <div class="flex-1">
+          <div class="flex items-center gap-3 mb-8">
+            <div class="bg-pink-300 p-2 border-2 border-black neo-shadow -rotate-3">
+              <i data-lucide="check-circle" class="w-7 h-7 text-black"></i>
+            </div>
+            <h2 class="text-4xl font-black italic">SYLLABUS</h2>
+          </div>
+          <div id="syllabus-container" class="space-y-6"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer class="bg-white border-t-4 border-black relative z-10 mt-auto">
+    <div class="max-w-7xl mx-auto px-6 py-12 flex flex-col lg:flex-row justify-between gap-12">
+      
+      <div class="max-w-sm space-y-6">
+        <div class="flex items-center gap-2">
+          <div class="bg-black p-2">
+            <i data-lucide="graduation-cap" class="text-white w-6 h-6"></i>
+          </div>
+          <span class="text-3xl font-black uppercase italic tracking-tighter">Back<span class="bg-yellow-400 px-1">.Benchers</span></span>
+        </div>
+        <p class="text-lg font-medium text-gray-800 border-l-4 border-yellow-400 pl-4">
+          The ultimate open-source library for engineers. Free notes, syllabus copies, and high-quality resources.
+        </p>
+        <div class="mt-6">
+  <a href="https://expo.dev/artifacts/eas/jVvPNbB9hRwgeRKS3qhbYe.apk" 
+     class="inline-flex items-center gap-3 border-2 border-black p-3 bg-white hover:bg-yellow-400 transition-colors group neo-shadow w-max">
+      <i data-lucide="smartphone" class="w-5 h-5 group-hover:rotate-12 transition-transform"></i>
+      <div class="flex flex-col">
+        <span class="font-bold font-mono text-xs uppercase">Download Android App</span>
+        <span class="text-[10px] opacity-60 font-mono italic">Offline Access Enabled</span>
+      </div>
+  </a>
+</div>
+      </div>
+
+      <div class="flex flex-col gap-6">
+        
+        <div>
+            <h3 class="font-black text-xl uppercase tracking-widest bg-black text-white inline-block px-2 py-1 mb-4">Connect</h3>
+            <div class="flex gap-4">
+            <button onclick="openSocialModal('instagram')" class="w-12 h-12 flex items-center justify-center border-2 border-black bg-pink-400 hover:bg-black group transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[2px] hover:translate-x-[2px] hover:shadow-none">
+                <i data-lucide="instagram" class="w-6 h-6 text-black group-hover:text-white"></i>
+            </button>
+            <button onclick="openSocialModal('linkedin')" class="w-12 h-12 flex items-center justify-center border-2 border-black bg-blue-400 hover:bg-black group transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[2px] hover:translate-x-[2px] hover:shadow-none">
+                <i data-lucide="linkedin" class="w-6 h-6 text-black group-hover:text-white"></i>
+            </button>
+            <button onclick="openSocialModal('github')" class="w-12 h-12 flex items-center justify-center border-2 border-black bg-white hover:bg-black group transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[2px] hover:translate-x-[2px] hover:shadow-none">
+                <i data-lucide="github" class="w-6 h-6 text-black group-hover:text-white"></i>
+            </button>
+            </div>
+        </div>
+
+        
+      </div>
+<!-- Upload Notes CTA -->
+<div>
+  
+  <button id="upload-form-btn"
+     class="inline-flex items-center gap-2 border-2 border-black px-4 py-2 bg-yellow-400 hover:bg-black hover:text-white font-bold transition-colors">
+    <i data-lucide="upload-cloud" class="w-5 h-5"></i>
+    Upload Notes
+  </button>
+
+  <div class="text-[11px] text-gray-500 mt-2 font-mono">
+    Tip: For large files, include a Drive/OneDrive link in the form.
+  </div>
+</div>
+
+
+      <div class="max-w-md w-full">
+        <h3 class="font-black text-xl uppercase tracking-widest bg-yellow-400 text-black inline-block px-2 py-1 mb-4 border-2 border-black transform -rotate-1">
+            Report Bug / Feedback
+        </h3>
+        <form id="feedback-form" class="bg-white border-2 border-black p-4 neo-shadow relative" onsubmit="handleFeedback(event)">
+            <textarea id="feedback-text" required class="w-full bg-zinc-100 border-2 border-black p-2 font-mono text-sm focus:outline-none focus:bg-yellow-50 mb-3 h-24 resize-none placeholder-gray-500" placeholder="Missing a subject? Link broken? Tell us here..."></textarea>
+            <button type="submit" class="w-full bg-black text-white font-bold py-2 border-2 border-transparent hover:bg-white hover:text-black hover:border-black transition-all uppercase tracking-widest text-sm flex items-center justify-center gap-2">
+                Send Feedback <i data-lucide="send" class="w-4 h-4"></i>
+            </button>
+        </form>
+      </div>
+
+    </div>
+
+    <div class="w-full bg-zinc-900 border-t-4 border-black py-8 text-center">
+      <p class="font-mono text-xs md:text-sm text-white leading-loose px-4">
+        DESIGNED & DEVELOPED BY <span class="text-yellow-400">NARENDRA YENAGANDULA</span> & <span class="text-cyan-400">MADHAN MYANA</span>
+      </p>
+    </div>
+    
+    <div class="bg-black text-white py-4 text-center border-t-2 border-zinc-800">
+      <div class="font-mono text-[10px] tracking-widest opacity-60">&copy; 2025 BACK.BENCHERS RESOURCES. OPEN SOURCE.</div>
+    </div>
+  </footer>
+
+  <div id="social-modal" class="fixed inset-0 z-[100] flex items-center justify-center hidden">
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeSocialModal()"></div>
+    
+    <div class="relative bg-white border-4 border-black p-8 max-w-md w-full m-4 shadow-[12px_12px_0px_0px_rgba(0,0,0,1)]">
+      <button onclick="closeSocialModal()" class="absolute top-4 right-4 border-2 border-black bg-white p-1 hover:bg-red-500 hover:text-white transition-colors">
+        <i data-lucide="x" class="w-6 h-6"></i>
+      </button>
+      
+      <div class="text-center mb-8">
+        <div id="modal-icon-container" class="inline-flex p-3 border-2 border-black mb-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          </div>
+        <h3 id="modal-title" class="text-2xl font-black uppercase italic"></h3>
+        <p class="font-mono text-xs text-gray-500 mt-2">SELECT A DEVELOPER TO CONNECT</p>
+      </div>
+      
+      <div id="modal-links" class="space-y-4">
+        </div>
+    </div>
+  </div>
+
+  <script>
+    // Mobile Menu Logic (single authoritative copy)
+    function toggleMobileMenu() {
+        const menu = document.getElementById('mobile-menu');
+        const btnIcon = document.querySelector('#mobile-menu-btn i');
+        
+        if (menu.classList.contains('menu-hidden')) {
+            menu.classList.remove('menu-hidden');
+            menu.classList.add('menu-visible');
+            btnIcon.setAttribute('data-lucide', 'x');
+        } else {
+            menu.classList.remove('menu-visible');
+            menu.classList.add('menu-hidden');
+            btnIcon.setAttribute('data-lucide', 'menu');
+        }
+        if (window.lucide) window.lucide.createIcons();
+    }
+  </script>
+
+  <script src="script.js"></script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js')
+        .then(reg => console.log('ServiceWorker registered. Scope:', reg.scope))
+        .catch(err => console.warn('SW failed:', err));
+    });
+  }
+
+  let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  const installBtn = document.createElement('button');
+  installBtn.textContent = 'Install app';
+  installBtn.style.position='fixed';
+  installBtn.style.bottom='16px';
+  installBtn.style.right='16px';
+  document.body.appendChild(installBtn);
+  installBtn.addEventListener('click', async () => {
+    deferredPrompt.prompt();
+    const choice = await deferredPrompt.userChoice;
+    deferredPrompt = null;
+    installBtn.remove();
+  });
+});
+</script>
+  <!-- Upload Form Modal (embed + fallback) -->
+<div id="upload-form-modal" class="fixed inset-0 z-[120] hidden items-center justify-center">
+  <div class="absolute inset-0 bg-black/60" onclick="closeUploadFormModal()"></div>
+
+  <div class="relative bg-white border-4 border-black p-4 max-w-3xl w-full m-4 shadow-[12px_12px_0_rgba(0,0,0,1)]">
+    <button onclick="closeUploadFormModal()" class="absolute top-3 right-3 border-2 border-black bg-white p-1 hover:bg-red-500 hover:text-white">
+      <i data-lucide="x" class="w-5 h-5"></i>
+    </button>
+
+    <div class="text-center mb-3">
+      <div class="inline-flex p-2 border-2 border-black mb-2 bg-pink-200">
+        <i data-lucide="upload-cloud" class="w-6 h-6"></i>
+      </div>
+      <h3 class="text-2xl font-black uppercase italic">Upload Notes</h3>
+      <p class="text-sm text-gray-600 font-mono mt-1">Embed form below — or open in a new tab if needed.</p>
+    </div>
+
+    <div id="upload-iframe-wrap" class="w-full h-[70vh] border-2 border-black overflow-hidden mb-3">
+      <iframe id="upload-form-iframe" src="" title="Upload Notes Form" class="w-full h-full" frameborder="0"></iframe>
+    </div>
+
+    <div class="flex gap-3 justify-center">
+      <a id="upload-open-newtab" href="#" target="_blank" class="px-4 py-2 border-2 border-black font-bold inline-flex items-center gap-2 hover:bg-black hover:text-white transition-colors">
+        <i data-lucide="external-link" class="w-4 h-4"></i> Open Form in New Tab
+      </a>
+      <button onclick="closeUploadFormModal()" class="px-4 py-2 border-2 border-black bg-yellow-400 hover:bg-black hover:text-white font-bold transition-colors">
+        Close
+      </button>
+    </div>
+
+    <div class="text-xs text-gray-500 font-mono mt-3 text-center">
+      If the form fails to embed, use "Open Form in New Tab".
+    </div>
+  </div>
+</div>
+
+<script>
+ 
+  // --- FINAL: your Google Form embed URL (converted to embedded view)
+  const uploadFormLink = 'https://docs.google.com/forms/d/e/1FAIpQLSdyhwnkesWqKMJAcqa1206lK1QgJv0eFweXwMYt76IyT8s4lw/viewform?embedded=true';
+
+  // Elements
+  const uploadBtn = document.getElementById('upload-form-btn');
+  const modal = document.getElementById('upload-form-modal');
+  const iframe = document.getElementById('upload-form-iframe');
+  const openNewTabLink = document.getElementById('upload-open-newtab');
+
+  // Debug console lines (helps confirm the live page is using this script)
+  console.log('[UploadForm] uploadFormLink =', uploadFormLink);
+  console.log('[UploadForm] uploadBtn present?', !!uploadBtn, 'modal?', !!modal, 'iframe?', !!iframe);
+
+  function openUploadFormModal() {
+    if (!uploadFormLink) {
+      alert('Upload form link not set. Contact site admin.');
+      return;
+    }
+
+    // If a short forms.gle link somehow used, open new tab instead (embedding won't work)
+    if (uploadFormLink.includes('forms.gle')) {
+      console.warn('[UploadForm] forms.gle shortlink detected — opening new tab.');
+      window.open(uploadFormLink, '_blank');
+      return;
+    }
+
+    // Try to set iframe src
+    try {
+      iframe.src = uploadFormLink;
+      openNewTabLink.href = uploadFormLink.replace('?embedded=true','');
+    } catch (err) {
+      console.error('[UploadForm] failed to set iframe src', err);
+      window.open(uploadFormLink, '_blank');
+      return;
+    }
+
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+
+    if (window.lucide && typeof window.lucide.createIcons === 'function') window.lucide.createIcons();
+  }
+
+  function closeUploadFormModal() {
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    try { iframe.src = 'about:blank'; } catch(e) {}
+  }
+
+  if (uploadBtn) uploadBtn.addEventListener('click', openUploadFormModal);
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeUploadFormModal(); });
+
+  // Mobile convenience: prefer new tab on small screens
+  if (window.matchMedia && window.matchMedia('(max-width:640px)').matches) {
+    uploadBtn && uploadBtn.addEventListener('click', (ev) => {
+      ev.preventDefault();
+      window.open(uploadFormLink, '_blank');
+    }, { once: true });
+  }
+</script>
+<div id="app-download-banner" 
+     style="display: none; z-index: 9999;" 
+     class="fixed bottom-6 left-6 right-6 md:left-auto md:right-6 md:max-w-md">
+    
+    <div class="bg-white border-4 border-black p-4 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] flex items-center gap-4 relative">
+        
+        <button type="button" 
+                onclick="forceCloseBanner()" 
+                class="absolute -top-3 -right-3 bg-red-500 text-white border-2 border-black w-8 h-8 flex items-center justify-center hover:bg-black cursor-pointer font-bold">
+            ✕
+        </button>
+
+        <div class="bg-yellow-400 border-2 border-black p-2 hidden sm:block">
+            <i data-lucide="smartphone" class="w-8 h-8 text-black"></i>
+        </div>
+
+        <div class="flex-grow">
+            <h4 class="font-black text-sm uppercase italic">Get the App</h4>
+            <p class="text-[11px] font-mono text-gray-600">Faster access to JNTUH notes and results and Results.</p>
+        </div>
+
+        <a href="https://expo.dev/artifacts/eas/jVvPNbB9hRwgeRKS3qhbYe.apk" 
+           class="bg-black text-white px-4 py-2 font-bold text-xs uppercase border-2 border-black hover:bg-yellow-400 hover:text-black transition-all">
+            Download
+        </a>
+    </div>
+</div>
+
+<script>
+  // Global function to close banner
+  window.forceCloseBanner = function() {
+    const banner = document.getElementById('app-download-banner');
+    if (banner) {
+      banner.style.setProperty('display', 'none', 'important');
+      localStorage.setItem('app_banner_v2', 'hidden');
+    }
+  };
+
+  // Global function to show banner
+  window.initBanner = function() {
+    const banner = document.getElementById('app-download-banner');
+    const status = localStorage.getItem('app_banner_v2');
+
+    // If it hasn't been hidden before, show it
+    if (banner && status !== 'hidden') {
+      banner.style.display = 'block';
+      
+      // Ensure icons render
+      if (window.lucide) {
+        window.lucide.createIcons();
+      }
+    }
+  };
+
+  // Run exactly 2 seconds after page load
+  if (document.readyState === 'complete') {
+    setTimeout(window.initBanner, 2000);
+  } else {
+    window.addEventListener('load', () => setTimeout(window.initBanner, 2000));
+  }
+</script>
+  <script>
+  // 📱 APP DOWNLOAD LOGIC (Popup + Sticky Bar)
+  
+  // Use addEventListener to prevent conflicts with other scripts
+  window.addEventListener('load', function() {
+      console.log("Page loaded, triggering popup in 1 second..."); // Debug message
+      setTimeout(showAppPopup, 1000);
+  });
+
+  // --- 1. MODAL POPUP FUNCTIONS ---
+  function showAppPopup() {
+    // Prevent duplicate popups
+    if (document.getElementById("appPopup")) return;
+
+    console.log("Creating Popup..."); // Debug message
+
+    const popup = document.createElement("div");
+    popup.id = "appPopup";
+    // Added 'flex' and fixed z-index to ensure visibility
+    popup.className = "fixed inset-0 bg-black/80 backdrop-blur-sm z-[9999] flex items-center justify-center p-4";
+
+    const apkLink = "https://expo.dev/artifacts/eas/jVvPNbB9hRwgeRKS3qhbYe.apk";
+
+    popup.innerHTML = `
+      <div class="bg-white text-black w-full max-w-[340px] p-6 rounded-2xl shadow-2xl relative border border-yellow-500/30">
+        
+        <button onclick="closeAppPopup()" 
+                class="absolute top-3 right-3 text-gray-400 hover:text-red-500 transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
+        <div class="flex justify-center mb-4">
+          <div class="bg-yellow-100 p-3 rounded-full">
+             <i class="fab fa-android text-3xl text-yellow-600"></i>
+          </div>
+        </div>
+
+        <h2 class="text-center font-black text-xl uppercase tracking-wider mb-2 text-gray-900">
+          Download the App
+        </h2>
+        
+        <p class="text-center text-sm font-medium text-gray-600 mb-6 leading-relaxed">
+          Get the official <span class="text-yellow-600 font-bold">Android App</span> for a faster experience! 🚀
+        </p>
+
+        <div class="flex flex-col gap-3">
+          <a href="${apkLink}" 
+             target="_blank"
+             class="block w-full bg-yellow-600 hover:bg-yellow-500 text-white font-black py-3 rounded-xl text-center text-sm uppercase tracking-widest shadow-lg shadow-yellow-500/30 active:scale-95 transition-all flex items-center justify-center gap-2">
+             <i class="fas fa-download"></i> Download APK
+          </a>
+          
+          <button onclick="closeAppPopup()" 
+                  class="block w-full text-gray-400 hover:text-gray-600 font-bold text-xs uppercase tracking-widest py-2">
+            Maybe Later
+          </button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(popup);
+  }
+
+  function closeAppPopup() {
+    const popup = document.getElementById("appPopup");
+    if (popup) {
+      popup.remove();
+      showStickyNotification();
+    }
+  }
+
+  // --- 2. STICKY NOTIFICATION FUNCTIONS ---
+  function showStickyNotification() {
+    const notification = document.getElementById("app-download-notification");
+    if (notification) {
+      // Force display flex to override 'display: none'
+      notification.style.display = "flex"; 
+    }
+  }
+
+  // Define this globally so the HTML onclick can find it
+  window.closeAppNotification = function() {
+    const notification = document.getElementById("app-download-notification");
+    if (notification) {
+      notification.style.display = "none";
+    }
+  }
+
+  // --- 3. MOBILE MENU LOGIC ---
+  function toggleMobileMenu() {
+    const menu = document.getElementById("mobileMenu");
+    const icon = document.querySelector('nav button i'); 
+    
+    if (menu.classList.contains("hidden")) {
+        menu.classList.remove("hidden");
+        // Ensure 'animate-reveal' is defined in your CSS, or remove it if causing issues
+        menu.classList.add("animate-reveal"); 
+        if (icon) icon.className = "fas fa-times"; 
+    } else {
+        menu.classList.add("hidden");
+        if (icon) icon.className = "fas fa-bars"; 
+    }
+  }
+</script>
+</body>
+</html>
