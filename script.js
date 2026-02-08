@@ -1,172 +1,254 @@
 /* =====================================================
-   CONFIG
+   1. CONFIGURATION (OLD KEPT)
+===================================================== */
+const years = [
+  { id: 1, label: "1st Year" },
+  { id: 2, label: "2nd Year" },
+  { id: 3, label: "3rd Year" },
+  { id: 4, label: "4th Year" }
+];
+
+const branches = [
+  "CSE",
+  "CSE(AIML)",
+  "CSE(DS)",
+  "CSE(Design)",
+  "ECE",
+  "EEE",
+  "CIV",
+  "MECH"
+];
+
+/* =====================================================
+   2. API CONFIG (NEW)
 ===================================================== */
 const API_BASE = "https://jtuh-backend-7rad.onrender.com";
 
 /* =====================================================
-   STATE
+   3. STATE (OLD KEPT)
 ===================================================== */
-const state = {
+let state = {
   year: null,
   branch: null,
   semester: null
 };
 
-const YEARS = [1, 2, 3, 4];
+/* =====================================================
+   4. DOM ELEMENTS (OLD KEPT)
+===================================================== */
+const els = {
+  yearContainer: document.getElementById("year-container"),
+  branchSection: document.getElementById("branch-section"),
+  branchContainer: document.getElementById("branch-container"),
+  semSection: document.getElementById("semester-section"),
+  resourcesSection: document.getElementById("resources-section"),
+  notesContainer: document.getElementById("notes-container"),
+  breadcrumb: document.getElementById("breadcrumb-text")
+};
 
 /* =====================================================
-   HELPERS
+   5. HELPERS
 ===================================================== */
-function esc(str) {
-  return String(str || "").replace(/[&<>"']/g, m => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#039;"
-  }[m]));
+function esc(s) {
+  return String(s || "");
 }
 
 /* =====================================================
-   URL BUILDERS
+   6. API HELPERS (NEW)
 ===================================================== */
 function viewUrl(branch, year, sem, file) {
-  return `${API_BASE}/api/pdf?branch=${encodeURIComponent(branch)}&file=${encodeURIComponent(
-    `year${year}/sem${sem}/${file}`
-  )}`;
+  return `${API_BASE}/api/pdf?branch=${encodeURIComponent(
+    branch
+  )}&file=${encodeURIComponent(`year${year}/sem${sem}/${file}`)}`;
 }
 
 function downloadUrl(branch, year, sem, file) {
-  return `${API_BASE}/api/download?branch=${encodeURIComponent(branch)}&file=${encodeURIComponent(
-    `year${year}/sem${sem}/${file}`
-  )}`;
+  return `${API_BASE}/api/download?branch=${encodeURIComponent(
+    branch
+  )}&file=${encodeURIComponent(`year${year}/sem${sem}/${file}`)}`;
 }
 
-/* =====================================================
-   FETCH
-===================================================== */
-async function fetchSubjects() {
+async function fetchSubjectsFromAPI(year, branch, sem) {
   const res = await fetch(
-    `${API_BASE}/api/list?branch=${state.branch}&year=${state.year}&sem=${state.semester}`
+    `${API_BASE}/api/list?branch=${branch}&year=${year}&sem=${sem}`
   );
   return res.json();
 }
 
 /* =====================================================
-   UNITS
+   7. UNIT GENERATOR (OLD LOGIC KEPT)
 ===================================================== */
-function getUnitsForSubject(file) {
-  const base = file.replace(/\.pdf$/i, "");
-  return Array.from({ length: 5 }, (_, i) => ({
-    title: `Unit ${i + 1}`,
-    filename: `${base} - Unit ${i + 1}.pdf`
-  }));
+function getUnitsForSubject(subjectFile) {
+  const base = subjectFile.replace(/\.pdf$/i, "");
+  const units = [];
+  for (let i = 1; i <= 5; i++) {
+    units.push({
+      title: `Unit ${i}`,
+      filename: `${base} - Unit ${i}.pdf`
+    });
+  }
+  return units;
 }
 
 /* =====================================================
-   SUBJECT UI
+   8. SUBJECT FOLDER UI (OLD KEPT, LINKS UPDATED)
 ===================================================== */
 function createSubjectFolderDOM(subject) {
-  const div = document.createElement("div");
-  div.className = "bg-white border-2 border-black p-4 mb-4";
+  const folder = document.createElement("div");
+  folder.className =
+    "bg-white border-2 border-black p-4 shadow-[4px_4px_0] mb-4";
 
-  div.innerHTML = `
+  folder.innerHTML = `
     <div class="flex justify-between items-center">
       <div>
-        <div class="font-bold">${esc(subject.title)}</div>
-        <div class="text-xs">${esc(subject.filename)}</div>
+        <div class="font-bold text-lg">${esc(subject.title)}</div>
+        <div class="text-xs text-gray-600">${esc(subject.file)}</div>
       </div>
-      <button class="toggle bg-yellow-300 border-2 border-black px-3 py-1 font-bold">
-        Open
+      <button class="toggle px-4 py-2 border-2 border-black bg-yellow-300 font-bold">
+        Open Folder
       </button>
     </div>
-    <div class="units hidden mt-3"></div>
+    <div class="units hidden mt-4"></div>
   `;
 
-  const btn = div.querySelector(".toggle");
-  const box = div.querySelector(".units");
+  const toggleBtn = folder.querySelector(".toggle");
+  const unitsBox = folder.querySelector(".units");
 
-  btn.onclick = () => {
-    if (box.classList.contains("hidden")) {
-      box.innerHTML = getUnitsForSubject(subject.filename).map(u => `
-        <div class="flex justify-between border-2 border-black p-2 mb-2">
-          <a target="_blank" href="${viewUrl(state.branch, state.year, state.semester, u.filename)}">${u.title}</a>
-          <a href="${downloadUrl(state.branch, state.year, state.semester, u.filename)}">Download</a>
+  toggleBtn.onclick = () => {
+    if (unitsBox.classList.contains("hidden")) {
+      const units = getUnitsForSubject(subject.file);
+      unitsBox.innerHTML = units
+        .map(
+          u => `
+        <div class="flex justify-between items-center border-2 border-black p-2 mb-2">
+          <a target="_blank"
+             href="${viewUrl(state.branch, state.year, state.semester, u.filename)}">
+             ${u.title}
+          </a>
+          <a href="${downloadUrl(
+            state.branch,
+            state.year,
+            state.semester,
+            u.filename
+          )}" class="text-xs font-bold">
+            DOWNLOAD
+          </a>
         </div>
-      `).join("");
-      box.classList.remove("hidden");
-      btn.textContent = "Close";
+      `
+        )
+        .join("");
+      unitsBox.classList.remove("hidden");
+      toggleBtn.textContent = "Close Folder";
     } else {
-      box.classList.add("hidden");
-      btn.textContent = "Open";
+      unitsBox.classList.add("hidden");
+      toggleBtn.textContent = "Open Folder";
     }
   };
 
-  return div;
+  return folder;
 }
 
 /* =====================================================
-   RENDER SUBJECTS
+   9. RENDER YEARS (OLD KEPT)
 ===================================================== */
-async function renderUnits() {
-  const box = document.getElementById("units");
-  if (!box) return;
+function renderYears() {
+  els.yearContainer.innerHTML = years
+    .map(
+      y => `
+    <button onclick="setYear(${y.id})"
+      class="h-32 border-2 border-white/20 bg-zinc-900 text-white hover:bg-yellow-400 hover:text-black transition-all flex flex-col items-center justify-center gap-1">
+      <span class="text-5xl font-black">${y.id}</span>
+      <span class="text-xs font-bold uppercase">Year</span>
+    </button>
+  `
+    )
+    .join("");
+}
 
-  box.innerHTML = "Loading...";
-  const subjects = await fetchSubjects();
+/* =====================================================
+   10. RENDER BRANCHES (OLD KEPT)
+===================================================== */
+function renderBranches() {
+  els.branchContainer.innerHTML = branches
+    .map(
+      b => `
+    <button onclick="setBranch('${b}')"
+      class="py-4 border-2 border-black font-black text-xl hover:bg-pink-100">
+      ${b}
+    </button>
+  `
+    )
+    .join("");
+}
 
-  if (!subjects.length) {
-    box.innerHTML = "No PDFs found";
+/* =====================================================
+   11. ACTION HANDLERS (OLD FLOW KEPT)
+===================================================== */
+window.setYear = function (y) {
+  state.year = y;
+  state.branch = null;
+  state.semester = null;
+
+  renderYears();
+  renderBranches();
+
+  els.branchSection.classList.remove("hidden");
+  els.semSection.classList.add("hidden");
+  els.resourcesSection.classList.add("hidden");
+
+  els.branchSection.scrollIntoView({ behavior: "smooth" });
+};
+
+window.setBranch = function (b) {
+  state.branch = b;
+  state.semester = null;
+
+  els.semSection.classList.remove("hidden");
+  els.resourcesSection.classList.add("hidden");
+
+  els.semSection.scrollIntoView({ behavior: "smooth" });
+};
+
+window.setSemester = async function (s) {
+  state.semester = s;
+
+  els.notesContainer.innerHTML =
+    `<div class="p-4 border-2 border-black bg-yellow-100 font-bold">
+      Loading subjects...
+     </div>`;
+
+  const subjects = await fetchSubjectsFromAPI(
+    state.year,
+    state.branch,
+    state.semester
+  );
+
+  if (!subjects || subjects.length === 0) {
+    els.notesContainer.innerHTML =
+      `<div class="p-4 border-2 border-black bg-yellow-100 font-bold">
+        No subjects found
+      </div>`;
     return;
   }
 
-  box.innerHTML = "";
-  subjects.forEach(s => box.appendChild(createSubjectFolderDOM(s)));
-}
+  els.notesContainer.innerHTML = "";
+  subjects.forEach(sub => {
+    els.notesContainer.appendChild(
+      createSubjectFolderDOM({
+        title: sub.title,
+        file: sub.filename
+      })
+    );
+  });
 
-/* =====================================================
-   RENDER YEARS
-===================================================== */
-function renderYears() {
-  const box = document.getElementById("year-container");
-  if (!box) return;
-
-  box.innerHTML = YEARS.map(y => `
-    <button onclick="selectYear(${y})"
-      class="year-btn border-2 border-black p-6 text-white bg-black">
-      ${y} YEAR
-    </button>
-  `).join("");
-}
-
-/* =====================================================
-   FLOW CONTROLLERS (🔥 KEY FIX 🔥)
-===================================================== */
-window.selectYear = y => {
-  state.year = y;
-
-  document.getElementById("branch-section")?.classList.remove("hidden");
-  document.getElementById("semester-section")?.classList.add("hidden");
-  document.getElementById("units-section")?.classList.add("hidden");
-};
-
-window.selectBranch = b => {
-  state.branch = b;
-
-  document.getElementById("semester-section")?.classList.remove("hidden");
-  document.getElementById("units-section")?.classList.add("hidden");
-};
-
-window.selectSemester = s => {
-  state.semester = s;
-
-  document.getElementById("units-section")?.classList.remove("hidden");
-  renderUnits();
+  els.resourcesSection.classList.remove("hidden");
+  els.resourcesSection.scrollIntoView({ behavior: "smooth" });
 };
 
 /* =====================================================
-   INIT
+   12. INIT (OLD KEPT)
 ===================================================== */
 document.addEventListener("DOMContentLoaded", () => {
   renderYears();
+  renderBranches();
 });
