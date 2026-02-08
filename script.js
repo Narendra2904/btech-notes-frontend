@@ -2,7 +2,7 @@
    CONFIG
 ===================================================== */
 const API_BASE = "https://jtuh-backend-7rad.onrender.com"; 
-// ⬆️ replace with your backend URL (NOT localhost)
+// 🔁 change only if backend URL changes
 
 /* =====================================================
    STATE
@@ -32,7 +32,7 @@ function esc(str) {
 }
 
 /* =====================================================
-   API URL BUILDERS (OLD LOGIC PRESERVED)
+   API URL BUILDERS
 ===================================================== */
 function viewUrl(branch, year, sem, file) {
   return `${API_BASE}/api/pdf?branch=${encodeURIComponent(branch)}&file=${encodeURIComponent(
@@ -47,7 +47,7 @@ function downloadUrl(branch, year, sem, file) {
 }
 
 /* =====================================================
-   FETCH SUBJECTS FROM BACKEND
+   FETCH SUBJECTS
 ===================================================== */
 async function fetchSubjects() {
   const res = await fetch(
@@ -57,7 +57,7 @@ async function fetchSubjects() {
 }
 
 /* =====================================================
-   UNITS GENERATOR (5 UNITS LOGIC)
+   UNIT GENERATOR
 ===================================================== */
 function getUnitsForSubject(subjectFile) {
   const base = subjectFile.replace(/\.pdf$/i, "");
@@ -146,7 +146,7 @@ async function renderUnits() {
 
   const subjects = await fetchSubjects();
 
-  if (!subjects.length) {
+  if (!subjects || !subjects.length) {
     box.innerHTML = "<div>No PDFs available</div>";
     return;
   }
@@ -160,7 +160,7 @@ async function renderUnits() {
 }
 
 /* =====================================================
-   YEAR RENDER (FIXES YOUR ISSUE)
+   RENDER YEARS (FIXED)
 ===================================================== */
 function renderYears() {
   const box = document.getElementById("year-container");
@@ -178,19 +178,23 @@ function renderYears() {
 }
 
 /* =====================================================
-   UI ACTIONS (HTML EXPECTS THESE)
+   UI ACTIONS (SAFE)
 ===================================================== */
 window.selectYear = y => {
   state.year = y;
   state.branch = null;
   state.semester = null;
-  document.getElementById("units").innerHTML = "";
+
+  const unitsBox = document.getElementById("units");
+  if (unitsBox) unitsBox.innerHTML = "";
 };
 
 window.selectBranch = b => {
   state.branch = b;
   state.semester = null;
-  document.getElementById("units").innerHTML = "";
+
+  const unitsBox = document.getElementById("units");
+  if (unitsBox) unitsBox.innerHTML = "";
 };
 
 window.selectSemester = s => {
